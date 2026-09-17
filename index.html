@@ -350,7 +350,7 @@
     let all = JSON.parse(localStorage.getItem('cc_leads') || '[]');
     all.push(data);
     localStorage.setItem('cc_leads', JSON.stringify(all));
-    const { data, error } = await supabaseClient.from('leads').insert([data]);
+    const { data, error } = await supabaseClient.from('Connect partner Org').insert([data]);
     showScreen('thanks');
   });
 
