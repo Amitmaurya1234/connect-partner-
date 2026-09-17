@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Connect Partner</title>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#f0f0f0;line-height:1.5}
+  .hidden{display:none!important}
+
+  .top-bar{
+    background:linear-gradient(90deg,#b91c1c,#ea580c);
+    color:#fff;text-align:center;padding:10px 12px;
+    font-size:.84rem;font-weight:600;position:sticky;top:0;z-index:100
+  }
+  .top-bar span{background:rgba(0,0,0,.3);padding:2px 7px;border-radius:4px}
+
+  nav{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 16px;background:rgba(10,10,10,.97);
+    border-bottom:1px solid #222;position:sticky;top:40px;z-index:99
+  }
+  .logo{font-weight:800;color:#ffd700;font-size:1.15rem}
+  .nav-btn{
+    background:#ffd700;color:#111;padding:8px 14px;border-radius:50px;
+    font-weight:700;font-size:.82rem;border:none;cursor:pointer
+  }
+
+  .cta{
+    display:inline-block;background:linear-gradient(135deg,#ffd700,#f59e0b);
+    color:#111;padding:14px 28px;border-radius:50px;font-weight:800;
+    font-size:.98rem;border:none;cursor:pointer;
+    box-shadow:0 6px 20px rgba(255,200,0,.28)
+  }
+
+  .hero{
+    padding:48px 16px 28px;text-align:center;
+    background:radial-gradient(ellipse at 50% 0%,#1a1200 0%,#0a0a0a 70%)
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,60,60,.12);border:1px solid rgba(255,80,80,.4);
+    color:#ff6b6b;padding:5px 12px;border-radius:30px;
+    font-size:.8rem;font-weight:600;margin-bottom:14px
+  }
+  .dot{width:7px;height:7px;background:#ff3b3b;border-radius:50%;animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .hero h1{font-size:clamp(1.7rem,5vw,2.45rem);font-weight:800;line-height:1.2;margin-bottom:10px}
+  .hero h1 span{color:#ffd700}
+  .hero p{color:#aaa;max-width:400px;margin:0 auto 16px;font-size:.95rem}
+  .trust{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:18px;font-size:.82rem;color:#999}
+  .cta-note{margin-top:8px;font-size:.75rem;color:#666}
+
+  .ticker-wrap{background:#111;border-top:1px solid #222;border-bottom:1px solid #222;padding:10px 0;overflow:hidden}
+  .ticker{display:inline-block;white-space:nowrap;animation:scroll 52s linear infinite;font-size:.8rem;color:#999}
+  .ticker span{margin:0 20px}
+  @keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);max-width:360px;
+    margin:18px auto;text-align:center;gap:6px
+  }
+  .stat-num{font-size:1.3rem;font-weight:800;color:#ffd700}
+  .stat-label{font-size:.68rem;color:#777}
+
+  .section{padding:26px 14px}
+  .section-dark{background:#0f0f0f}
+  .section-title{text-align:center;font-size:1.2rem;font-weight:700;margin-bottom:4px}
+  .section-sub{text-align:center;color:#888;font-size:.85rem;margin-bottom:16px}
+
+  .occasions{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px;max-width:720px;margin:0 auto
+  }
+  .occ-card{
+    background:#161616;border:1px solid #2a2a2a;border-radius:11px;
+    padding:14px 10px;text-align:center;font-size:.84rem
+  }
+  .occ-card span{display:block;font-size:1.3rem;margin-bottom:5px}
+
+  .profiles{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));
+    gap:10px;max-width:780px;margin:0 auto
+  }
+  .card{
+    background:#161616;border:1px solid #2a2a2a;border-radius:12px;
+    padding:11px 8px;text-align:center;position:relative
+  }
+  .status{
+    position:absolute;top:6px;left:6px;
+    font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:20px
+  }
+  .status.online{background:rgba(34,197,94,.18);color:#4ade80}
+  .status.available{background:rgba(34,197,94,.12);color:#4ade80}
+  .status.busy{background:rgba(249,115,22,.15);color:#fb923c}
+  .status.booked{background:rgba(239,68,68,.15);color:#f87171}
+  .avatar{
+    width:52px;height:52px;border-radius:50%;margin:4px auto 6px;
+    overflow:hidden;border:2px solid #333
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;filter:blur(5px);transform:scale(1.12)}
+  .card h4{font-size:.84rem;margin-bottom:2px}
+  .meta{font-size:.68rem;color:#888}
+
+  .safety{
+    max-width:520px;margin:0 auto;background:#161616;border:1px solid #2a2a2a;
+    border-radius:14px;padding:20px 16px
+  }
+  .safety-item{display:flex;gap:12px;margin-bottom:14px;font-size:.88rem;color:#ccc}
+  .safety-item:last-child{margin-bottom:0}
+  .safety-icon{font-size:1.2rem;flex-shrink:0;width:28px;text-align:center}
+  .safety-item strong{color:#ffd700;display:block;margin-bottom:2px;font-size:.9rem}
+
+  .price-box{
+    max-width:300px;margin:0 auto;background:linear-gradient(160deg,#171717,#1f1f1f);
+    border:2px solid #ffd700;border-radius:14px;padding:22px 16px;text-align:center;position:relative
+  }
+  .price-badge{
+    position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+    background:#b91c1c;color:#fff;font-size:.67rem;font-weight:700;
+    padding:3px 10px;border-radius:20px
+  }
+  .price{font-size:2.4rem;font-weight:800;color:#ffd700;margin:6px 0 2px}
+  .price small{font-size:.85rem;color:#aaa}
+  .bullets{text-align:left;max-width:220px;margin:10px auto 14px;font-size:.83rem;color:#bbb}
+  .bullets li{list-style:none;margin-bottom:5px;padding-left:16px;position:relative}
+  .bullets li::before{content:"✓";position:absolute;left:0;color:#ffd700;font-weight:700}
+
+  footer{padding:16px 12px;text-align:center;color:#555;font-size:.72rem;border-top:1px solid #1a1a1a}
+
+  .screen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:20px 14px;background:radial-gradient(ellipse at top,#1a1200 0%,#0a0a0a 70%)
+  }
+  .box{
+    width:100%;max-width:360px;background:#141414;
+    border:1px solid #2a2a2a;border-radius:14px;padding:22px 16px
+  }
+  .box h2{font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:4px}
+  .box .sub{text-align:center;color:#888;font-size:.85rem;margin-bottom:14px}
+  .box label{display:block;font-size:.77rem;color:#aaa;margin-bottom:3px}
+  .box input,.box select{
+    width:100%;background:#1e1e1e;border:1px solid #333;border-radius:9px;
+    padding:10px 12px;color:#fff;font-size:.92rem;margin-bottom:10px;outline:none
+  }
+  .box input:focus,.box select:focus{border-color:#ffd700}
+  .box .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .box .cta{width:100%}
+</style>
+</head>
+<body>
+
+<div id="landing">
+  <div class="top-bar">🔥 Only <span id="slots">21</span> slots left today • People are joining now</div>
+
+  <nav>
+    <div class="logo">Connect Partner</div>
+    <button class="nav-btn" onclick="startPayment()">Get Access ₹399</button>
+  </nav>
+
+  <section class="hero">
+    <div class="badge"><div class="dot"></div> <span id="live">31</span> people joined in the last 2 hours</div>
+    <h1>Don't Go Alone.<br><span>Take a Partner.</span></h1>
+    <p>Movie, party, wedding, shopping, coffee or travel — find a verified partner and enjoy together.</p>
+    <div class="trust">
+      <span>✓ Instant access</span>
+      <span>✓ Privacy protected</span>
+      <span>✓ One-time fee</span>
+    </div>
+    <button class="cta" onclick="startPayment()">Unlock Access — ₹399</button>
+    <div class="cta-note">One-time payment • Instant unlock</div>
+  </section>
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"></div>
+  </div>
+
+  <div class="stats">
+    <div><div class="stat-num" id="statUsers">1,548</div><div class="stat-label">Members</div></div>
+    <div><div class="stat-num" id="statJoined">338</div><div class="stat-label">This week</div></div>
+    <div><div class="stat-num" id="statOnline">67</div><div class="stat-label">Online now</div></div>
+  </div>
+
+  <!-- Occasions -->
+  <section class="section">
+    <h2 class="section-title">Perfect For</h2>
+    <p class="section-sub">Join • Browse • Book • Meet • Enjoy</p>
+    <div class="occasions">
+      <div class="occ-card"><span>🎬</span>Movie Outing</div>
+      <div class="occ-card"><span>☕</span>Chai / Coffee</div>
+      <div class="occ-card"><span>🛍️</span>Shopping Buddy</div>
+      <div class="occ-card"><span>🎉</span>Party / Event</div>
+      <div class="occ-card"><span>💍</span>Wedding Plus-One</div>
+      <div class="occ-card"><span>✈️</span>Travel Partner</div>
+      <div class="occ-card"><span>🪔</span>Festival / Function</div>
+      <div class="occ-card"><span>🌙</span>Evening Company</div>
+    </div>
+  </section>
+
+  <!-- Profiles -->
+  <section class="section section-dark">
+    <h2 class="section-title">Active Right Now</h2>
+    <p class="section-sub">Live status • Full access after payment</p>
+    <div class="profiles" id="profileGrid"></div>
+  </section>
+
+  <!-- Safety -->
+  <section class="section">
+    <h2 class="section-title">Safety First</h2>
+    <p class="section-sub">Your safety and comfort matter</p>
+    <div class="safety">
+      <div class="safety-item">
+        <div class="safety-icon">📍</div>
+        <div><strong>Public Meeting First</strong>First meeting is always suggested at a public place.</div>
+      </div>
+      <div class="safety-item">
+        <div class="safety-icon">⭐</div>
+        <div><strong>Both Side Ratings</strong>After every booking, both people can rate each other.</div>
+      </div>
+      <div class="safety-item">
+        <div class="safety-icon">🛡️</div>
+        <div><strong>Zero Tolerance</strong>Any wrong behaviour can be reported. Account gets banned immediately.</div>
+      </div>
+      <div class="safety-item">
+        <div class="safety-icon">✓</div>
+        <div><strong>Verified Photos</strong>Profiles go through basic photo verification.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section section-dark">
+    <div class="price-box">
+      <div class="price-badge">LIMITED</div>
+      <div class="price">₹399 <small>only</small></div>
+      <ul class="bullets">
+        <li>Full profile access</li>
+        <li>See who is online / available</li>
+        <li>Browse & book partners</li>
+        <li>One-time payment</li>
+      </ul>
+      <button class="cta" style="width:100%" onclick="startPayment()">Pay ₹399 & Unlock</button>
+    </div>
+  </section>
+
+  <footer>© 2026 Connect Partner</footer>
+</div>
+
+<!-- PROFILE FORM -->
+<div id="profileForm" class="screen hidden">
+  <div class="box">
+    <h2>Payment Successful ✓</h2>
+    <p class="sub">Complete your profile to activate access</p>
+    <form id="dataForm">
+      <label>Full Name *</label>
+      <input type="text" id="name" placeholder="Your name" required>
+      <div class="row">
+        <div>
+          <label>Age *</label>
+          <input type="number" id="age" placeholder="25" min="18" max="55" required>
+        </div>
+        <div>
+          <label>Gender *</label>
+          <select id="gender" required>
+            <option value="">Select</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <label>Looking for *</label>
+      <select id="looking" required>
+        <option value="">Select</option>
+        <option value="Boyfriend">Boyfriend / Male Partner</option>
+        <option value="Girlfriend">Girlfriend / Female Partner</option>
+      </select>
+      <label>Your City *</label>
+      <input type="text" id="city" placeholder="Indore, Jaipur, Lucknow..." required>
+      <label>Qualification / Work</label>
+      <input type="text" id="qualification" placeholder="Graduate / Job / Business">
+      <label>Languages</label>
+      <input type="text" id="languages" placeholder="Hindi, English...">
+      <button type="submit" class="cta">Submit Profile</button>
+    </form>
+  </div>
+</div>
+
+<!-- THANKS -->
+<div id="thanks" class="screen hidden">
+  <div class="box" style="text-align:center">
+    <div style="font-size:2.3rem;margin-bottom:8px">✓</div>
+    <h2>Access Activated</h2>
+    <p class="sub">Your profile is submitted. You now have full access.</p>
+    <button class="cta" style="width:100%;margin-top:12px" onclick="showScreen('landing')">Go to Home</button>
+  </div>
+</div>
+
+<script>
+  const RAZORPAY_KEY = "rzp_test_Td9s69Mi9dBnMx";
+
+  function showScreen(id){
+    ['landing','profileForm','thanks'].forEach(s => document.getElementById(s).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+
+  function startPayment(){
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: 39900,
+      currency: "INR",
+      name: "Connect Partner",
+      description: "One-time Access Fee",
+      handler: function(response){
+        localStorage.setItem('cc_payment_id', response.razorpay_payment_id);
+        showScreen('profileForm');
+      },
+      theme: { color: "#ffd700" }
+    };
+    new Razorpay(options).open();
+  }
+
+  document.getElementById('dataForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('name').value.trim(),
+      age: document.getElementById('age').value,
+      gender: document.getElementById('gender').value,
+      looking: document.getElementById('looking').value,
+      city: document.getElementById('city').value.trim(),
+      qualification: document.getElementById('qualification').value.trim(),
+      languages: document.getElementById('languages').value.trim(),
+      payment_id: localStorage.getItem('cc_payment_id') || '',
+      time: new Date().toLocaleString()
+    };
+    let all = JSON.parse(localStorage.getItem('cc_leads') || '[]');
+    all.push(data);
+    localStorage.setItem('cc_leads', JSON.stringify(all));
+    showScreen('thanks');
+  });
+
+  const profiles = [
+    {n:"Anjali S.",a:29,g:"Female",s:"online",img:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face"},
+    {n:"Rahul M.",a:31,g:"Male",s:"available",img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"},
+    {n:"Priya K.",a:27,g:"Female",s:"busy",img:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face"},
+    {n:"Amit D.",a:34,g:"Male",s:"online",img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face"},
+    {n:"Neha R.",a:28,g:"Female",s:"booked",img:"https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=200&fit=crop&crop=face"},
+    {n:"Vikram T.",a:36,g:"Male",s:"busy",img:"https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=face"},
+    {n:"Pooja G.",a:30,g:"Female",s:"available",img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face"},
+    {n:"Suresh J.",a:33,g:"Male",s:"online",img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face"}
+  ];
+
+  const tickerList = [
+    "Ravi joined from Indore","Pooja is available from Lucknow","Amit paid from Jaipur",
+    "Neha is online from Kanpur","Suresh joined from Bhopal","Priya booked from Patna",
+    "Rahul joined from Nagpur","Anjali is available from Surat","Vikram joined from Raipur",
+    "Deepak paid from Agra","Kavita is online from Ranchi","Manoj joined from Gwalior"
+  ];
+
+  function renderProfiles(){
+    const list = [...profiles].sort(()=>Math.random()-0.5).slice(0,6);
+    document.getElementById('profileGrid').innerHTML = list.map(p=>{
+      const st = p.s==='online'?'● Online':p.s==='available'?'Available':p.s==='busy'?'Busy':'Booked';
+      return `<div class="card"><div class="status ${p.s}">${st}</div><div class="avatar"><img src="${p.img}"></div><h4>${p.n}</h4><div class="meta">${p.a} • ${p.g}</div></div>`;
+    }).join('');
+  }
+  function renderTicker(){
+    document.getElementById('ticker').innerHTML = [...tickerList,...tickerList].map(t=>`<span>${t}</span>`).join('');
+  }
+
+  let slots=21, users=1548, joined=338, online=67, live=31;
+  setInterval(()=>{ if(Math.random()>0.5){ live=Math.min(45,live+1); document.getElementById('live').textContent=live; }},13000);
+  setInterval(()=>{ if(Math.random()>0.55){ joined++; users++; document.getElementById('statJoined').textContent=joined; document.getElementById('statUsers').textContent=users.toLocaleString(); }},18000);
+  setInterval(()=>{ online=Math.max(38,Math.min(78,online+(Math.random()>0.5?1:-1))); document.getElementById('statOnline').textContent=online; },10000);
+  setInterval(()=>{ if(Math.random()>0.6 && slots>7){ slots--; document.getElementById('slots').textContent=slots; }},15000);
+  setInterval(renderProfiles, 20000);
+
+  renderProfiles();
+  renderTicker();
+</script>
+</body>
+</html>
